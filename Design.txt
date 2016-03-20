@@ -1,0 +1,17 @@
+Design Decisions
+- I added a field to store the board in Game. I used PickleProperty because it allowed
+me to store a Python List in the datastore which seemed like the simplest way
+to record the state of the board.
+- I also added next_move, user_x, user_o, and winner (all KeyProperty) to the Game
+model to keep track of which User was either 'X' or 'O' and who's move it was.
+- I used a 'game_over' flag as well to mark completed games.
+- I modified the Score model to record result of the game.
+The result field can contain three values: 'user_x', 'user_o' and 'tie'.
+Finished game will either have value in winner or tie properties.
+- Since I keep games even when they finish in a tie, which makes it quite
+hard to keep result in a BooleanField, I decided to store them in a
+StringField in Score model and only give 3 possible
+values there: 'user_x', 'user_o', 'tie'.
+- Most games in tic-tac-toe finish in a tie, so I decided to use
+not_lose_percentage property mostly, to rank players
+- Checking for winner is hardcoded for 3x3 board to make it easier.
