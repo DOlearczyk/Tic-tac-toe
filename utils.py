@@ -1,6 +1,7 @@
 from google.appengine.ext import ndb
 import endpoints
 
+
 def get_by_urlsafe(urlsafe, model):
     """Returns an ndb.Model entity that the urlsafe key points to. Checks
         that the type of entity returned is of the correct kind. Raises an
@@ -32,25 +33,26 @@ def get_by_urlsafe(urlsafe, model):
     return entity
 
 
-def check_winner(board):
+def check_winner(board, size=3):
     """Check the board. If there is a winner, return the symbol of the winner"""
     # Check rows
-    for i in range(3):
-        if board[3*i]:
-            if board[3*i] == board[3*i + 1] and board[3*i] == board[3*i + 2]:
-                return board[3*i]
+    for i in range(size):
+        if board[size * i]:
+            if all_same(board[size * i:size * i + size]):
+                return board[size * i]
     # Check columns
-    for i in range(3):
+    for i in range(size):
         if board[i]:
-            if board[i] == board[i + 3] and board[i] == board[i + 6]:
+            if all_same(board[i:size * size:size]):
                 return board[i]
     # Check diagonals
     if board[0]:
-        if board[0] == board[4] and board[0] == board[8]:
+        if all_same(board[0:size * size:size + 1]):
             return board[0]
-    if board[2]:
-        if board[2] == board[4] and board[2] == board[6]:
-            return board[2]
+    if board[size - 1]:
+        if all_same(board[size - 1:size * (size - 1) + 1:size - 1]):
+            return board[size - 1]
+
 
 def check_full(board):
     """Return true if the board is full"""
@@ -58,3 +60,8 @@ def check_full(board):
         if not cell:
             return False
     return True
+
+
+def all_same(items):
+    """Check if all items in list have the same value."""
+    return all(x == items[0] for x in items)

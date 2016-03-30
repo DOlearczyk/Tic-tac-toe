@@ -35,12 +35,12 @@ class SendReminderEmail(webapp2.RequestHandler):
 
         for user in users:
             games = Game.query(ndb.OR(Game.user_x == user.key,
-                                     Game.user_o == user.key)).\
+                                      Game.user_o == user.key)). \
                 filter(Game.game_over == False)
             if games.count() > 0:
                 subject = 'This is a reminder!'
                 body = 'Hello {}, you have {} games in progress. Their' \
-                       ' keys are: {}'.\
+                       ' keys are: {}'. \
                     format(user.name,
                            games.count(),
                            ', '.join(game.key.urlsafe() for game in games))
@@ -57,8 +57,9 @@ class SendReminderEmail(webapp2.RequestHandler):
 class UpdateGamesFinished(webapp2.RequestHandler):
     def post(self):
         """Update game listing announcement in memcache."""
-        TicTacToeAPI._get_finished_games()
+        TicTacToeAPI._update_finished_games()
         self.response.set_status(204)
+
 
 class SendMoveEmail(webapp2.RequestHandler):
     def post(self):
@@ -67,18 +68,18 @@ class SendMoveEmail(webapp2.RequestHandler):
         user = get_by_urlsafe(self.request.get('user_key'), User)
         game = get_by_urlsafe(self.request.get('game_key'), Game)
         subject = 'It\'s your turn!'
-        body = '{}, It\'s your turn to play Tic Tac Toe. The game key is: {}'.\
-           format(user.name, game.key.urlsafe())
+        body = '{}, It\'s your turn to play Tic Tac Toe. The game key is: {}'. \
+            format(user.name, game.key.urlsafe())
         logging.debug(body)
         mail.send_mail('noreply@{}.appspotmail.com'.
-                               format(app_identity.get_application_id()),
-                               user.email,
-                               subject,
-                               body)
+                       format(app_identity.get_application_id()),
+                       user.email,
+                       subject,
+                       body)
 
 
 app = webapp2.WSGIApplication([
     ('/crons/send_reminder', SendReminderEmail),
-    ('/tasks/get_finished_games', UpdateGamesFinished),
+    ('/tasks/update_finished_games', UpdateGamesFinished),
     ('/tasks/send_move_email', SendMoveEmail),
 ], debug=True)

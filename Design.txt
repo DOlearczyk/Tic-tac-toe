@@ -14,4 +14,5 @@ StringField in Score model and only give 3 possible
 values there: 'user_x', 'user_o', 'tie'.
 - Most games in tic-tac-toe finish in a tie, so I decided to use
 not_lose_percentage property mostly, to rank players
-- Checking for winner is hardcoded for 3x3 board to make it easier.
+- Checking for winner is made to fit any board size above 2x2
+- I decided to give players 3 points for win, 1 point for tie and 0 points for lose.

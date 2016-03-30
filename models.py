@@ -1,6 +1,6 @@
 from datetime import date
-from protorpc import messages
 from google.appengine.ext import ndb
+from form import UserForm, GameForm, ScoreForm
 
 
 class User(ndb.Model):
@@ -10,6 +10,11 @@ class User(ndb.Model):
     wins = ndb.IntegerProperty(default=0)
     ties = ndb.IntegerProperty(default=0)
     total_played = ndb.IntegerProperty(default=0)
+
+    @property
+    def points(self):
+        """User points"""
+        return self.wins*3+self.ties
 
     @property
     def win_percentage(self):
@@ -32,29 +37,38 @@ class User(ndb.Model):
                         wins=self.wins,
                         ties=self.ties,
                         total_played=self.total_played,
-                        not_lose_percentage=self.not_lose_percentage)
+                        not_lose_percentage=self.not_lose_percentage,
+                        points=self.points)
+
+    @classmethod
+    def get_user_by_name(cls, username):
+        """Gets User by his name. Return None on no User found"""
+        return User.query(User.name == username).get()
+
+    def update_stats(self):
+        """Adds game to user and update."""
+        self.total_played += 1
+        self.put()
 
     def add_win(self):
         """Add a win"""
         self.wins += 1
-        self.total_played += 1
-        self.put()
+        self.update_stats()
 
     def add_tie(self):
         """Add a tie"""
         self.ties += 1
-        self.total_played += 1
-        self.put()
+        self.update_stats()
 
     def add_loss(self):
-        """Add a loss"""
-        self.total_played += 1
-        self.put()
+        """Add a loss. Used as additional method for extensibility."""
+        self.update_stats()
 
 
 class Game(ndb.Model):
     """Game object"""
     board = ndb.PickleProperty(required=True)
+    board_size = ndb.IntegerProperty(required=True, default=3)
     next_move = ndb.KeyProperty(required=True)  # The User's whose turn it is
     user_x = ndb.KeyProperty(required=True, kind='User')
     user_o = ndb.KeyProperty(required=True, kind='User')
@@ -64,13 +78,14 @@ class Game(ndb.Model):
     history = ndb.PickleProperty(required=True)
 
     @classmethod
-    def new_game(cls, user_x, user_o):
+    def new_game(cls, user_x, user_o, board_size=3):
         """Creates and returns a new game"""
         game = Game(user_x=user_x,
                     user_o=user_o,
                     next_move=user_x)
-        game.board = ['' for _ in range(9)]
+        game.board = ['' for _ in range(board_size*board_size)]
         game.history = []
+        game.board_size = board_size
         game.put()
         return game
 
@@ -78,6 +93,7 @@ class Game(ndb.Model):
         """Returns a GameForm representation of the Game"""
         form = GameForm(urlsafe_key=self.key.urlsafe(),
                         board=str(self.board),
+                        board_size=self.board_size,
                         user_x=self.user_x.get().name,
                         user_o=self.user_o.get().name,
                         next_move=self.next_move.get().name,
@@ -109,7 +125,7 @@ class Game(ndb.Model):
         # Update the user models
         if winner:
             winner.get().add_win()
-            loser = self.user_x if winner == self.user_x else self.user_o
+            loser = self.user_x if winner == self.user_o else self.user_o
             loser.get().add_loss()
         else:
             self.user_x.get().add_tie()
@@ -128,66 +144,3 @@ class Score(ndb.Model):
                          user_x=self.user_x.get().name,
                          user_o=self.user_o.get().name,
                          result=self.result)
-
-
-class GameForm(messages.Message):
-    """GameForm for outbound game state information"""
-    urlsafe_key = messages.StringField(1, required=True)
-    board = messages.StringField(2, required=True)
-    user_x = messages.StringField(3, required=True)
-    user_o = messages.StringField(4, required=True)
-    next_move = messages.StringField(5, required=True)
-    game_over = messages.BooleanField(6, required=True)
-    winner = messages.StringField(7)
-    tie = messages.BooleanField(8)
-
-
-class GameForms(messages.Message):
-    """Container for multiple GameForm"""
-    items = messages.MessageField(GameForm, 1, repeated=True)
-
-
-class NewGameForm(messages.Message):
-    """Used to create a new game"""
-    user_x = messages.StringField(1, required=True)
-    user_o = messages.StringField(2, required=True)
-
-
-class MakeMoveForm(messages.Message):
-    """Used to make a move in an existing game"""
-    user_name = messages.StringField(1, required=True)
-    move = messages.IntegerField(2, required=True)
-
-
-class ScoreForm(messages.Message):
-    """ScoreForm for outbound Score information"""
-    date = messages.StringField(1, required=True)
-    user_x = messages.StringField(2, required=True)
-    user_o = messages.StringField(3, required=True)
-    result = messages.StringField(4)
-
-
-class ScoreForms(messages.Message):
-    """Return multiple ScoreForms"""
-    items = messages.MessageField(ScoreForm, 1, repeated=True)
-
-
-class StringMessage(messages.Message):
-    """StringMessage-- outbound (single) string message"""
-    message = messages.StringField(1, required=True)
-
-
-
-class UserForm(messages.Message):
-    """User Form"""
-    name = messages.StringField(1, required=True)
-    email = messages.StringField(2)
-    wins = messages.IntegerField(3, required=True)
-    ties = messages.IntegerField(4, required=True)
-    total_played = messages.IntegerField(5, required=True)
-    not_lose_percentage = messages.FloatField(6, required=True)
-
-
-class UserForms(messages.Message):
-    """Container for multiple User Forms"""
-    items = messages.MessageField(UserForm, 1, repeated=True)
