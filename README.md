@@ -14,25 +14,25 @@ Tic-Tac-Toe is a simple two player game. Game instructions are available
 [here](https://en.wikipedia.org/wiki/Tic-tac-toe). Games can also be created
 to use board with size up to 100x100.
 
-The board is represented as a 1-D list of squares with indexes as follows:
-[0, 1, 2
- 3, 4, 5
+The board is represented as a 1-D list of squares with indexes as follows:  
+[0, 1, 2  
+ 3, 4, 5  
  6, 7, 8]
 
-Indexes on bigger boards will follow the pattern. For example below is 5x5 board:
+Indexes on bigger boards will follow the pattern. For example below is 5x5 board:  
 
-[0, 1, 2, 3, 4
- 5, 6, 7, 8, 9
- 10, 11, 12, 13, 14
- 15, 16, 17, 18, 19
+[0, 1, 2, 3, 4  
+ 5, 6, 7, 8, 9  
+ 10, 11, 12, 13, 14  
+ 15, 16, 17, 18, 19  
  20, 21, 22, 23, 24]
 
 
 ##Game example:
-In the example we have following situation on the board:
-| X | O | X
-| O | X |
-| O |   |
+In the example we have following situation on the board:  
+| X | O | X  
+| O | X |  
+| O |     |
 
 Next move is on user_x which let's say name is Mouse. He can make move to
 positions with following indexes: 5, 7, 8. By making his move on index 8 he
