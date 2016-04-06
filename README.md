@@ -29,9 +29,15 @@ Indexes on bigger boards will follow the pattern. For example below is 5x5 board
 
 
 ##Game example:
+<<<<<<< HEAD
 In the example we have following situation on the board:
 | X | O | X
 | O | X |
+=======
+In the example we have following situation on the board:  
+| X | O | X  
+| O | X |  
+>>>>>>> origin/master
 | O | &nbsp;&nbsp;&nbsp; |
 
 Next move is on user_x which let's say name is Mouse. He can make move to
@@ -168,4 +174,8 @@ move 8 will result in winning him the game.
  - **UserForms**
     - Container for one or more UserForm.
  - **StringMessage**
+<<<<<<< HEAD
     - General purpose String container.
+=======
+    - General purpose String container.
+>>>>>>> origin/master
