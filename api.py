@@ -48,7 +48,7 @@ class TicTacToeAPI(remote.Service):
                       name='get_user_rankings',
                       http_method='GET')
     def get_user_rankings(self, request):
-        """Return all Users ranked by points"""
+        """Return all Users ranked by their not lose percentage"""
         users = User.query(User.total_played > 0).fetch()
         users = sorted(users, key=lambda x: x.points,
                        reverse=True)
@@ -150,7 +150,7 @@ class TicTacToeAPI(remote.Service):
         size = game.board_size * game.board_size - 1
         if move < 0 or move > size:
             raise endpoints.BadRequestException('Invalid move! Must be between'
-                                                '0 and %s ' % size)
+                                                '0 and %s ')
         if game.board[move] != '':
             raise endpoints.BadRequestException('Invalid move!')
 
