@@ -69,7 +69,7 @@ class Game(ndb.Model):
     """Game object"""
     board = ndb.PickleProperty(required=True)
     board_size = ndb.IntegerProperty(required=True, default=3)
-    next_move = ndb.KeyProperty(required=True)  # The User's whose turn it is
+    next_move = ndb.KeyProperty(required=True)  # The User whose turn it is
     user_x = ndb.KeyProperty(required=True, kind='User')
     user_o = ndb.KeyProperty(required=True, kind='User')
     game_over = ndb.BooleanProperty(required=True, default=False)
