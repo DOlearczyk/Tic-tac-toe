@@ -9,7 +9,7 @@
  Deploy your application.
  
  
-##Game Description:
+## Game Description:
 Tic-Tac-Toe is a simple two player game. Game instructions are available
 [here](https://en.wikipedia.org/wiki/Tic-tac-toe). Games can also be created
 to use board with size up to 100x100.
@@ -28,7 +28,7 @@ Indexes on bigger boards will follow the pattern. For example below is 5x5 board
  20, 21, 22, 23, 24]
 
 
-##Game example:
+## Game example:
 In the example we have following situation on the board:  
 | X | O | X  
 | O | X |  
@@ -40,7 +40,7 @@ will win the game. So calling make_move endpoint with user_name Mouse and
 move 8 will result in winning him the game.
 
 
-##Files Included:
+## Files Included:
  - api.py: Contains endpoints and game playing logic.
  - app.yaml: App configuration.
  - cron.yaml: Cronjob configuration.
@@ -49,7 +49,7 @@ move 8 will result in winning him the game.
  - models.py: Entity definitions and their helpful functions.
  - utils.py: Helper function for retrieving ndb.Models by urlsafe Key string.
 
-##Endpoints Included:
+## Endpoints Included:
  - **cancel_game**
     - Path: 'game/{urlsafe_game_key}'
     - Method: DELETE
@@ -136,7 +136,7 @@ move 8 will result in winning him the game.
     - Returns: UserForms sorted by user points.
     - Description: Return all Users ranked by their points.
 
-##Models Included:
+## Models Included:
  - **User**
     - Stores unique user_name and (optional) email address.
     - Also keeps track of wins, ties and total_played.
@@ -149,7 +149,7 @@ move 8 will result in winning him the game.
     - Records completed games. Associated with Users model via KeyProperty as
     well.
 
-##Forms Included:
+## Forms Included:
  - **GameForm**
     - Representation of a Game's state (urlsafe_key, board,
     user_x, user_o, game_over, winner).
